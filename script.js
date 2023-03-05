@@ -19,14 +19,6 @@ function start() {
   loadJSON();
 }
 
-// function loadJSON() {
-//   fetch("https://petlatkea.dk/2021/hogwarts/students.json")
-//     .then((response) => response.json())
-//     .then((jsonData) => {
-//       // when loaded, prepare objects
-//       prepareObjects(jsonData);
-//     });
-// }
 async function loadJSON() {
   let [studentData, bloodData] = await Promise.all([
     fetch("https://petlatkea.dk/2021/hogwarts/students.json").then((response) =>
