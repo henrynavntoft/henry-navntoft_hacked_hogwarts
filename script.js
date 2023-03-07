@@ -4,11 +4,15 @@
 // TELLING TO RUN THE FUNCTION START WHEN DOM IS LOADED
 window.addEventListener("DOMContentLoaded", start);
 
-//MAKING A CONSTANT VARIABLE FOR FILTER
-const myGlobalObj = { filter: "*" };
-
 // ARRAY WHERE ALL STUDENTS WILL BE PUSHED TOO
 let allStudents = [];
+
+//GLOBAL OBJECT FOR SETTINGS
+const settings = {
+  filter: "all",
+  sortBy: "house",
+  sortDir: "asc",
+};
 
 //PROTOTYPE FOR EACH STUDENT
 const Student = {
@@ -21,36 +25,21 @@ const Student = {
   house: "",
 };
 
-// STARTING THE WHOLE INIT LOOP
-function start() {
-  document.querySelectorAll(".filter").forEach((each) => {
-    each.addEventListener("click", filterClick);
+// REGISTER IF BTN AND FILTERS ARE CLICKED/APPLIED - BEEING CALLED IN START FUNCTION
+function registerBtn() {
+  document.querySelectorAll("[data-action='filter']").forEach((each) => {
+    each.addEventListener("click", selectFilter);
   });
 
+  document.querySelectorAll("[data-action='sort']").forEach((each) => {
+    each.addEventListener("click", selectSort);
+  });
+}
+
+// STARTING THE WHOLE INIT LOOP
+function start() {
+  registerBtn();
   loadJSON();
-}
-
-// MOTHER FILTER FUNCTION
-function filterClick(evt) {
-  console.log(evt.target.dataset.filter);
-  myGlobalObj.filter = evt.target.dataset.filter;
-
-  let filteredStudents;
-  if (myGlobalObj.filter !== "*") {
-    filteredStudents = allStudents.filter(filterAll);
-  } else {
-    filteredStudents = allStudents;
-  }
-
-  displayList(filteredStudents); // Redisplay the list with the new filter setting
-}
-
-// FILTER FUNCTION 2 - CHECKS IF VARIABLE IS EQUAL TO OBJECT
-function filterAll(student) {
-  console.log(myGlobalObj.filter);
-  if (student.house === myGlobalObj.filter) {
-    return true;
-  }
 }
 
 // FETCHING THE DATA - PARRALEL FETCHING MAKES TWO VARIABLES
@@ -166,6 +155,114 @@ function prepareObjects(studentData, bloodData) {
   displayList(allStudents);
 }
 
+// ------------------------------------------FILTERING------------------------------------------
+
+function selectFilter(event) {
+  const filter = event.target.dataset.filter;
+  //filterList(filter);
+  setFilter(filter);
+}
+
+function setFilter(filter) {
+  settings.filterBy = filter;
+  buildList();
+}
+
+function filterList(filteredList) {
+  //let filteredList = allStudents;
+  if (settings.filterBy === "Hufflepuff") {
+    filteredList = allStudents.filter(isHuf);
+  } else if (settings.filterBy === "Slytherin") {
+    filteredList = allStudents.filter(isSlyt);
+  } else if (settings.filterBy === "Gryffindor") {
+    filteredList = allStudents.filter(isGryf);
+  } else if (settings.filterBy === "Ravenclaw") {
+    filteredList = allStudents.filter(isRav);
+  } else {
+    false;
+  }
+  return filteredList;
+}
+
+function isHuf(student) {
+  return student.house === "Hufflepuff";
+}
+
+function isSlyt(student) {
+  return student.house === "Slytherin";
+}
+
+function isGryf(student) {
+  return student.house === "Gryffindor";
+}
+
+function isRav(student) {
+  return student.house === "Ravenclaw";
+}
+
+// ------------------------------------------SORTING------------------------------------------
+function selectSort(event) {
+  const sortBy = event.target.dataset.sort;
+  const sortDir = event.target.dataset.sortDirection;
+
+  // HIGHLIGHT WHEN SORTED AFTER
+
+  //FIND OLD HIGHLIGHTED
+  const oldElement = document.querySelector(`[data-sort='${settings.sortBy}']`);
+
+  //REMOVES SORTAFTER CLASS
+  oldElement.classList.remove("sortAfter");
+
+  //INDICATE ACTIVE SORTED
+  event.target.classList.add("sortAfter");
+
+  if (sortDir === "asc") {
+    event.target.dataset.sortDirection = "desc";
+  } else {
+    event.target.dataset.sortDirection = "asc";
+  }
+
+  console.log(sortBy, sortDir);
+
+  setSort(sortBy, sortDir);
+}
+
+function setSort(sortBy, sortDir) {
+  settings.sortBy = sortBy;
+  settings.sortDir = sortDir;
+  buildList();
+}
+
+function sortList(sortedList) {
+  //let sortedList = allStudents;
+  let direction = 1;
+  if (settings.sortDir === "desc") {
+    direction = -1;
+  } else {
+    direction = 1;
+  }
+
+  sortedList = sortedList.sort(genericSort);
+
+  function genericSort(studentA, studentB) {
+    if (studentA[settings.sortBy] < studentB[settings.sortBy]) {
+      return -1 * direction;
+    } else {
+      return 1 * direction;
+    }
+  }
+
+  return sortedList;
+}
+
+// BOTH SORT AND FILTER PUSH TO LIST
+function buildList() {
+  const currentList = filterList(allStudents);
+  const sortedList = sortList(currentList);
+
+  displayList(sortedList);
+}
+
 // DISPLAYING THE WHOLE LIST
 function displayList(student) {
   console.log(student);
@@ -186,21 +283,16 @@ function displayStudent(student) {
 
   // ----- SET CLONE DATA -----
 
-  //FULLNAME
-  clone.querySelector(
-    "[data-field=fullName] h2"
-  ).textContent = `${student.firstName} ${student.lastName}`;
-
   //IMAGES
   const imageTd = clone.querySelector('td[data-field="image"]');
   const imageElement = imageTd.querySelector("img");
   imageElement.src = student.image;
 
-  // //FIRSTNAME
-  // clone.querySelector("[data-field=firstName]").textContent = student.firstName;
+  //FIRSTNAME
+  clone.querySelector("[data-field=firstName]").textContent = student.firstName;
 
-  // //LASTNAME
-  // clone.querySelector("[data-field=lastName]").textContent = student.lastName;
+  //LASTNAME
+  clone.querySelector("[data-field=lastName]").textContent = student.lastName;
 
   // //MIDDLENAME
   // clone.querySelector("[data-field=middleName]").textContent =
@@ -209,15 +301,23 @@ function displayStudent(student) {
   // //NICKNAME
   // clone.querySelector("[data-field=nickName]").textContent = student.nickName;
 
-  // //GENDER
-  // clone.querySelector("[data-field=gender]").textContent = student.gender;
+  //GENDER
+  clone.querySelector("[data-field=gender]").textContent = student.gender;
 
-  // //HOUSE
-  // clone.querySelector("[data-field=house]").textContent = student.house;
+  //HOUSE
+  clone.querySelector("[data-field=house]").textContent = student.house;
 
-  // // BLOOD STATUS
-  // clone.querySelector("[data-field=blood]").textContent = student.bloodStatus;
+  // BLOOD STATUS
+  clone.querySelector("[data-field=blood]").textContent = student.bloodStatus;
 
   // APPEND THE CLONE
   document.querySelector("#list tbody").appendChild(clone);
 }
+
+// function updateNumberOfStudents(array) {
+//   const numberOfStudents = array.length;
+//   const paragraph = document.querySelector("p.numberOfStudents");
+//   paragraph.textContent = `Number of students shown: ${numberOfStudents}`;
+// }
+
+// updateNumberOfStudents(displayList);

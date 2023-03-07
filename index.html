@@ -21,20 +21,22 @@
             <button class="filter" id="Ravenclaw" data-action="filter" data-filter="Ravenclaw">Ravenclaw</button>
             <button class="filter" id="All" data-action="filter" data-filter="*">All Students</button>
         </div>
+        <div>
+            <p class="numberOfStudents"></p>
+        </div>
     </section>
 
     <table id="list">
         <thead>
             <tr>
-                <th>Full Name</th>
-                <th>Image</th>
-                <!-- <th>First Name</th>
-                <th>Last Name</th> -->
+                <th data-action="sort" data-sort-direction="asc" data-sort="image">Image</th>
+                <th data-action="sort" data-sort-direction="desc" data-sort="firstName">First Name</th>
+                <th data-action="sort" data-sort-direction="asc" data-sort="lastName">Last Name</th>
                 <!-- <th>Middle Name</th>
                 <th>Nick Name</th> -->
-                <!-- <th>Gender</th>
-                <th>House</th>
-                <th>Blood</th> -->
+                <th data-action="sort" data-sort-direction="asc" data-sort="gender">Gender</th>
+                <th data-action="sort" data-sort-direction="desc" data-sort="house">House</th>
+                <th data-action="sort" data-sort-direction="asc" data-sort="bloodStatus">Blood</th>
             </tr>
         </thead>
         <tbody>
@@ -44,19 +46,17 @@
 
     <template id="student">
         <tr>
-            <td data-field="fullName">
-                <h2></h2>
-            </td>
+
             <td data-field="image">
                 <img src="" alt="" />
             </td>
-            <!-- <td data-field="firstName">First Name</td>
-            <td data-field="lastName">Last Name</td> -->
+            <td data-field="firstName">First Name</td>
+            <td data-field="lastName">Last Name</td>
             <!-- <td data-field="middleName">Middle Name</td>
             <td data-field="nickName">Nick Name</td> -->
-            <!-- <td data-field="gender">Gender</td>
+            <td data-field="gender">Gender</td>
             <td data-field="house">House</td>
-            <td data-field="blood">Blood</td> -->
+            <td data-field="blood">Blood</td>
         </tr>
     </template>
 

@@ -14,7 +14,19 @@
 
 .filter {
   text-align: center;
-  margin: 1rem;
+  padding: 1rem;
+}
+
+.sortAfter {
+  background-color: var(--hufflepuff);
+}
+
+.sortAfter[data-sort-direction="asc"]::after {
+  content: "👆🏼";
+}
+
+.sortAfter[data-sort-direction="desc"]::after {
+  content: "👇🏼";
 }
 
 table {
@@ -31,6 +43,7 @@ th {
   border: 1px solid rgb(190, 190, 190);
   padding: 10px;
   text-align: center; /* Center the content of cells */
+  cursor: pointer;
 }
 
 th[scope="col"] {
