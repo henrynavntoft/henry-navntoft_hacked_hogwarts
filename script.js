@@ -23,6 +23,8 @@ const Student = {
   gender: "",
   image: "",
   house: "",
+  stars: false,
+  winner: false,
 };
 
 // REGISTER IF BTN AND FILTERS ARE CLICKED/APPLIED - BEEING CALLED IN START FUNCTION
@@ -267,6 +269,57 @@ function buildList() {
 function displayList(student) {
   console.log(student);
 
+  // Assuming you have an array called "students" with objects that have a "house" and "expelled" property
+
+  const totalStudents = allStudents.length;
+  const gryffindorStudents = allStudents.filter(
+    (student) => student.house === "Gryffindor"
+  ).length;
+  const hufflepuffStudents = allStudents.filter(
+    (student) => student.house === "Hufflepuff"
+  ).length;
+  const ravenclawStudents = allStudents.filter(
+    (student) => student.house === "Ravenclaw"
+  ).length;
+  const slytherinStudents = allStudents.filter(
+    (student) => student.house === "Slytherin"
+  ).length;
+  const expelledStudents = allStudents.filter(
+    (student) => student.expelled
+  ).length;
+
+  const totalParagraph = document.querySelector("p.numberOfTotalStudents");
+  totalParagraph.textContent = `Total number of students is: ${totalStudents}`;
+
+  const gryffindorParagraph = document.querySelector(
+    "p.numberOfGryffindorStudents"
+  );
+  gryffindorParagraph.textContent = `Number of Gryffindor students is: ${gryffindorStudents}`;
+
+  const hufflepuffParagraph = document.querySelector(
+    "p.numberOfHufflepuffStudents"
+  );
+  hufflepuffParagraph.textContent = `Number of Hufflepuff students is: ${hufflepuffStudents}`;
+
+  const ravenclawParagraph = document.querySelector(
+    "p.numberOfRavenclawStudents"
+  );
+  ravenclawParagraph.textContent = `Number of Ravenclaw students is: ${ravenclawStudents}`;
+
+  const slytherinParagraph = document.querySelector(
+    "p.numberOfSlytherinStudents"
+  );
+  slytherinParagraph.textContent = `Number of Slytherin students is: ${slytherinStudents}`;
+
+  const expelledParagraph = document.querySelector(
+    "p.numberOfExpelledStudents"
+  );
+  expelledParagraph.textContent = `Number of expelled students is: ${expelledStudents}`;
+
+  const currentLength = student.length;
+  const paragraph = document.querySelector("p.numberOfCurrentStudents");
+  paragraph.textContent = `Number of students is: ${currentLength}`;
+
   // CLEAR LIST
   document.querySelector("#list tbody").innerHTML = "";
 
@@ -283,10 +336,78 @@ function displayStudent(student) {
 
   // ----- SET CLONE DATA -----
 
+  // STARS
+  if (
+    ((student.house === "slytherin" && student.bloodStatus !== "Half blood") ||
+      student.bloodStatus === "Pure Blood") &&
+    student.stars === true
+  ) {
+    clone.querySelector("[data-field=stars]").textContent = "★";
+  } else {
+    clone.querySelector("[data-field=stars]").textContent = "☆";
+  }
+
+  clone
+    .querySelector("[data-field=stars]")
+    .addEventListener("click", toggleStars);
+
+  function toggleStars() {
+    if (
+      ((student.house === "slytherin" &&
+        student.bloodStatus !== "Half blood") ||
+        student.bloodStatus === "Pure Blood") &&
+      student.stars === true
+    ) {
+      student.stars = false;
+    } else {
+      student.stars = true;
+    }
+    buildList();
+  }
+
+  //WINNERS
+  if (student.winner === true) {
+    clone.querySelector("[data-field=winner]").textContent = "⧗";
+  } else {
+    clone.querySelector("[data-field=winner]").textContent = "⧖";
+  }
+
+  clone
+    .querySelector("[data-field=winner]")
+    .addEventListener("click", toggleWinner);
+
+  function toggleWinner() {
+    if (student.winner === true) {
+      student.winner = false;
+    } else {
+      tryToMakeWinner(student);
+    }
+    buildList();
+  }
+
   //IMAGES
   const imageTd = clone.querySelector('td[data-field="image"]');
   const imageElement = imageTd.querySelector("img");
   imageElement.src = student.image;
+
+  // Check which house the student belongs to and change the border color accordingly
+  switch (student.house) {
+    case "Gryffindor":
+      imageElement.style.border = " 5px solid var(--gryffindor)";
+      imageElement.style.borderradius = " 2rem";
+      break;
+    case "Slytherin":
+      imageElement.style.border = "5px solid var(--slytherin)";
+      break;
+    case "Hufflepuff":
+      imageElement.style.border = "5px solid var(--hufflepuff)";
+      break;
+    case "Ravenclaw":
+      imageElement.style.border = "5px solid var(--ravenclaw)";
+      break;
+    default:
+      imageElement.style.border = "5px solid var(--default)";
+  }
 
   //FIRSTNAME
   clone.querySelector("[data-field=firstName]").textContent = student.firstName;
@@ -314,10 +435,48 @@ function displayStudent(student) {
   document.querySelector("#list tbody").appendChild(clone);
 }
 
-// function updateNumberOfStudents(array) {
-//   const numberOfStudents = array.length;
-//   const paragraph = document.querySelector("p.numberOfStudents");
-//   paragraph.textContent = `Number of students shown: ${numberOfStudents}`;
-// }
+function tryToMakeWinner(selectedStudent) {
+  const winners = allStudents.filter((student) => student.winner);
 
-// updateNumberOfStudents(displayList);
+  const numberOfWinner = winners.length;
+
+  const other = winners
+    .filter((student) => student.gender === selectedStudent.gender)
+    .shift();
+
+  console.log(other);
+
+  if (other !== undefined) {
+    console.log("Max 1 winner of each gender");
+    removeOther(other);
+  } else if (numberOfWinner >= 2) {
+    console.log("Max 2 winner");
+    removeAorB(winners[0], winners[1]);
+  } else {
+    makeWinner(selectedStudent);
+  }
+
+  function removeOther(other) {
+    removeWinner(other);
+    makeWinner(selectedStudent);
+  }
+
+  function removeAorB(winnerA, winnerB) {
+    //CHOICE A
+    removeWinner(winnerA);
+    makeWinner(selectedStudent);
+
+    //CHOICE B
+    removeWinner(winnerB);
+    makeWinner(selectedStudent);
+  }
+
+  function removeWinner(winnerStudent) {
+    winnerStudent.winner = false;
+  }
+
+  function makeWinner(student) {
+    //if (student.house === "Hufflepuff") {}
+    student.winner = true;
+  }
+}

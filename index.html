@@ -21,22 +21,33 @@
             <button class="filter" id="Ravenclaw" data-action="filter" data-filter="Ravenclaw">Ravenclaw</button>
             <button class="filter" id="All" data-action="filter" data-filter="*">All Students</button>
         </div>
-        <div>
-            <p class="numberOfStudents"></p>
-        </div>
+
+    </section>
+
+    <section class="currentNumber">
+        <p class="numberOfCurrentStudents"></p>
+        <p class="numberOfTotalStudents"></p>
+        <p class="numberOfGryffindorStudents"></p>
+        <p class="numberOfHufflepuffStudents"></p>
+        <p class="numberOfRavenclawStudents"></p>
+        <p class="numberOfSlytherinStudents"></p>
+        <p class="numberOfExpelledStudents"></p>
     </section>
 
     <table id="list">
         <thead>
             <tr>
-                <th data-action="sort" data-sort-direction="asc" data-sort="image">Image</th>
+                <th>Prefect</th>
+                <th>Inq. Squad</th>
+                <th>Image</th>
                 <th data-action="sort" data-sort-direction="desc" data-sort="firstName">First Name</th>
                 <th data-action="sort" data-sort-direction="asc" data-sort="lastName">Last Name</th>
                 <!-- <th>Middle Name</th>
                 <th>Nick Name</th> -->
-                <th data-action="sort" data-sort-direction="asc" data-sort="gender">Gender</th>
+                <th>Gender</th>
                 <th data-action="sort" data-sort-direction="desc" data-sort="house">House</th>
-                <th data-action="sort" data-sort-direction="asc" data-sort="bloodStatus">Blood</th>
+                <th>Blood</th>
+
             </tr>
         </thead>
         <tbody>
@@ -46,7 +57,8 @@
 
     <template id="student">
         <tr>
-
+            <td data-field="winner">Prefect</td>
+            <td data-field="stars">Inq. Squad</td>
             <td data-field="image">
                 <img src="" alt="" />
             </td>
