@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="style.css">
+    <title>Hacked Hogwarts</title>
+</head>
+
+<body>
+
+    <section class="topDoc">
+        <h1>*SORT AND FILTER OPTIONS*</h1>
+        <div class="filter-system">
+            <h3>Filter:</h3>
+            <button class="filter" id="Gryffindor" data-action="filter" data-filter="Gryffindor">Gryffindor</button>
+            <button class="filter" id="Slytherin" data-action="filter" data-filter="Slytherin">Slytherin</button>
+            <button class="filter" id="Huffelpuff" data-action="filter" data-filter="Huffelpuff">Huffelpuff</button>
+            <button class="filter" id="Ravenclaw" data-action="filter" data-filter="Ravenclaw">Ravenclaw</button>
+            <button class="filter" id="All" data-action="filter" data-filter="*">All Students</button>
+        </div>
+        <div class="sorting-system">
+            <h3>Sorting:</h3>
+        </div>
+    </section>
+
+    <section id="allStudents">
+        <template id="eachStudent">
+            <section id="styleStudent">
+                <div data-field="image">
+                    <img src="" alt="" />
+                </div>
+
+                <div data-field="fullName">
+                    <h2></h2>
+                </div>
+                <div data-field="firstName"></div>
+                <div data-field="lastName"></div>
+                <div data-field="middleName"></div>
+                <div data-field="nickName"></div>
+                <div data-field="gender"></div>
+                <div data-field="house"></div>
+                <div data-field="blood"></div>
+            </section>
+        </template>
+    </section>
+
+    <section id="popup" style="display: none;">
+
+    </section>
+
+</body>
+
+</html>

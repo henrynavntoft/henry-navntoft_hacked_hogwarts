@@ -1,0 +1,7 @@
+// Popup - add the eventlistener in the template for each student
+
+//make it show with the specific data associated
+
+// add eventlistener to change the style to hide again
+
+//function showDetails(student) {}

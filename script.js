@@ -1,24 +1,59 @@
+// "use strict" is a directive that enables strict mode in JavaScript. When this directive is used, the JavaScript code is executed in strict mode, which enforces a stricter set of rules and provides better error handling.
 "use strict";
 
+// TELLING TO RUN THE FUNCTION START WHEN DOM IS LOADED
 window.addEventListener("DOMContentLoaded", start);
 
-const allStudents = [];
+//MAKING A CONSTANT VARIABLE FOR FILTER
+const myGlobalObj = { filter: "*" };
 
+// ARRAY WHERE ALL STUDENTS WILL BE PUSHED TOO
+let allStudents = [];
+
+//PROTOTYPE FOR EACH STUDENT
 const Student = {
-  firstName: "Null",
-  lastName: "Null",
+  firstName: "",
+  lastName: "",
   middleName: "",
   nickName: "",
-  gender: "Null",
+  gender: "",
   image: "",
-  house: "Null",
+  house: "",
 };
 
+// STARTING THE WHOLE INIT LOOP
 function start() {
-  console.log("ready");
+  document.querySelectorAll(".filter").forEach((each) => {
+    each.addEventListener("click", filterClick);
+  });
+
   loadJSON();
 }
 
+// MOTHER FILTER FUNCTION
+function filterClick(evt) {
+  console.log(evt.target.dataset.filter);
+  myGlobalObj.filter = evt.target.dataset.filter;
+
+  let filteredStudents;
+  if (myGlobalObj.filter !== "*") {
+    filteredStudents = allStudents.filter(filterAll);
+  } else {
+    filteredStudents = allStudents;
+  }
+
+  displayList(filteredStudents); // Redisplay the list with the new filter setting
+}
+
+// FILTER FUNCTION 2 - CHECKS IF VARIABLE IS EQUAL TO OBJECT
+function filterAll(student) {
+  console.log(myGlobalObj.filter);
+  if (student.house === myGlobalObj.filter) {
+    return true;
+  }
+}
+
+// FETCHING THE DATA - PARRALEL FETCHING MAKES TWO VARIABLES
 async function loadJSON() {
   let [studentData, bloodData] = await Promise.all([
     fetch("https://petlatkea.dk/2021/hogwarts/students.json").then((response) =>
@@ -31,6 +66,7 @@ async function loadJSON() {
   prepareObjects(studentData, bloodData);
 }
 
+// PREPARING THE OBJECTS
 function prepareObjects(studentData, bloodData) {
   studentData.forEach((jsonObject) => {
     //  we create an object based on the prototype made before
@@ -43,6 +79,10 @@ function prepareObjects(studentData, bloodData) {
     student.house = jsonObject.house.trim().toLowerCase();
     student.house =
       student.house[0].toUpperCase() + student.house.slice(1).toLowerCase();
+
+    // HOUSE COLOR
+
+    //NEED TO FIND OUT HOW TO ASSIGN COLOR BASED ON HOUSE
 
     //GENDER
 
@@ -78,8 +118,6 @@ function prepareObjects(studentData, bloodData) {
 
     // MIDDLE NAME & NICK NAME
 
-    // make an if else statement -- middle name (if they have 3 in the length) -- nick name (could just do an else with people // only 1 = ernie)
-
     if (text.length === 3) {
       if (text[1].startsWith('"')) {
         student.nickName = text[1].slice(1, -1);
@@ -92,13 +130,17 @@ function prepareObjects(studentData, bloodData) {
     }
 
     // IMAGES
-    // check for both full last and first name
-    // give a dummy image for leeann
 
     if (student.lastName.includes("-")) {
       student.image = `images/${student.lastName
         .slice(student.lastName.indexOf("-") + 1)
         .toLowerCase()}_${student.firstName[0].toLowerCase()}.png`;
+    } else if (student.firstName === "Parvati") {
+      student.image = "images/patil_parvati.png";
+    } else if (student.firstName === "Padma") {
+      student.image = "images/patil_padma.png";
+    } else if (student.firstName === "Leanne") {
+      student.image = "images/default.png";
     } else {
       student.image = `images/${student.lastName.toLowerCase()}_${student.firstName[0].toLowerCase()}.png`;
     }
@@ -113,54 +155,69 @@ function prepareObjects(studentData, bloodData) {
     } else if (pureBlood.includes(student.lastName)) {
       student.bloodStatus = "Pure Blood";
     } else {
-      student.bloodStatus = "Muggle";
+      student.bloodStatus = "Muggle Blood";
     }
-
-    // values = pure, half and muggle
 
     // PUSH
 
     allStudents.push(student);
   });
 
-  displayList();
+  displayList(allStudents);
 }
 
-function displayList() {
-  // clear the list
+// DISPLAYING THE WHOLE LIST
+function displayList(student) {
+  console.log(student);
+
+  // CLEAR LIST
   document.querySelector("#list tbody").innerHTML = "";
 
-  // build a new list
-  allStudents.forEach(displayStudent);
+  // BUILD NEW LIST
+  student.forEach(displayStudent);
 }
 
+// DISPLAYING EACH STUDENT IN THE LIST
 function displayStudent(student) {
-  // create clone
+  // CREATE CLONE
   const clone = document
     .querySelector("template#student")
     .content.cloneNode(true);
 
-  // set clone data
-  clone.querySelector("[data-field=firstName]").textContent = student.firstName;
-  clone.querySelector("[data-field=lastName]").textContent = student.lastName;
-  clone.querySelector("[data-field=middleName]").textContent =
-    student.middleName;
-  clone.querySelector("[data-field=nickName]").textContent = student.nickName;
-  clone.querySelector("[data-field=gender]").textContent = student.gender;
+  // ----- SET CLONE DATA -----
+
+  //FULLNAME
+  clone.querySelector(
+    "[data-field=fullName] h2"
+  ).textContent = `${student.firstName} ${student.lastName}`;
 
   //IMAGES
   const imageTd = clone.querySelector('td[data-field="image"]');
   const imageElement = imageTd.querySelector("img");
   imageElement.src = student.image;
 
-  //HOUSE
+  // //FIRSTNAME
+  // clone.querySelector("[data-field=firstName]").textContent = student.firstName;
 
-  clone.querySelector("[data-field=house]").textContent = student.house;
+  // //LASTNAME
+  // clone.querySelector("[data-field=lastName]").textContent = student.lastName;
 
-  // BLOOD STATUS
+  // //MIDDLENAME
+  // clone.querySelector("[data-field=middleName]").textContent =
+  //   student.middleName;
 
-  clone.querySelector("[data-field=blood]").textContent = student.bloodStatus;
+  // //NICKNAME
+  // clone.querySelector("[data-field=nickName]").textContent = student.nickName;
 
-  // append clone to list
+  // //GENDER
+  // clone.querySelector("[data-field=gender]").textContent = student.gender;
+
+  // //HOUSE
+  // clone.querySelector("[data-field=house]").textContent = student.house;
+
+  // // BLOOD STATUS
+  // clone.querySelector("[data-field=blood]").textContent = student.bloodStatus;
+
+  // APPEND THE CLONE
   document.querySelector("#list tbody").appendChild(clone);
 }
