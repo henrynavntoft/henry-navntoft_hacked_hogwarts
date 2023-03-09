@@ -44,12 +44,6 @@
   border-radius: 2rem;
 }
 
-button {
-  cursor: pointer;
-  padding: 1rem;
-  border-radius: 2rem;
-}
-
 .searchShow button:hover {
   background-color: var(--highlight);
 }
@@ -162,12 +156,29 @@ tbody {
   align-items: center;
 }
 
+button {
+  cursor: pointer;
+}
+
+#popup .expelStudent {
+  padding: 1rem;
+  cursor: pointer;
+  border-radius: 2rem;
+}
+
+#popup .unexpelStudent {
+  padding: 1rem;
+  cursor: pointer;
+  border-radius: 2rem;
+}
+
 .popup_dialog {
   box-shadow: 1px 1px 10px #333;
   border-radius: 2rem;
   padding: 2rem;
   background-color: var(--highlight);
   position: relative;
+  width: 50%;
 }
 
 .closePopUp {

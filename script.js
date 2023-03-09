@@ -7,6 +7,9 @@ window.addEventListener("DOMContentLoaded", start);
 // ARRAY WHERE ALL STUDENTS WILL BE PUSHED TOO
 let allStudents = [];
 
+// ARRAY FOR EXPELLED STUDENTS
+let expelledStudents = [];
+
 //GLOBAL OBJECT FOR SETTINGS
 const settings = {
   filter: "all",
@@ -201,7 +204,7 @@ function filterList(filteredList) {
   } else if (settings.filterBy === "Ravenclaw") {
     filteredList = allStudents.filter(isRav);
   } else if (settings.filterBy === "Expelled") {
-    filteredList = allStudents.filter(isExpelled);
+    filteredList = expelledStudents;
   } else {
     false;
   }
@@ -297,8 +300,6 @@ function buildList() {
 function displayList(student) {
   console.log(student);
 
-  // Assuming you have an array called "students" with objects that have a "house" and "expelled" property
-
   const totalStudents = allStudents.length;
   const gryffindorStudents = allStudents.filter(
     (student) => student.house === "Gryffindor"
@@ -312,9 +313,7 @@ function displayList(student) {
   const slytherinStudents = allStudents.filter(
     (student) => student.house === "Slytherin"
   ).length;
-  const expelledStudents = allStudents.filter(
-    (student) => student.expelled
-  ).length;
+  const expelledStudentsLength = expelledStudents.length;
 
   const totalParagraph = document.querySelector("p.numberOfTotalStudents");
   totalParagraph.textContent = `Total number of students is: ${totalStudents}`;
@@ -342,7 +341,7 @@ function displayList(student) {
   const expelledParagraph = document.querySelector(
     "p.numberOfExpelledStudents"
   );
-  expelledParagraph.textContent = `Number of expelled students is: ${expelledStudents}`;
+  expelledParagraph.textContent = `Number of expelled students is: ${expelledStudentsLength}`;
 
   const currentLength = student.length;
   const paragraph = document.querySelector("p.numberOfCurrentStudents");
@@ -358,6 +357,7 @@ function displayList(student) {
 // -----------POPUP-------------
 function showDetails(student) {
   const popUp = document.querySelector("#popup");
+  const popUpContent = document.querySelector("#popup");
   console.log(popUp);
   popUp.classList.remove("hidden");
 
@@ -376,6 +376,7 @@ function showDetails(student) {
   popUp.querySelector("[data-field=house]").textContent = student.house;
   popUp.querySelector("[data-field=gender]").textContent = student.gender;
   popUp.querySelector("[data-field=blood]").textContent = student.bloodStatus;
+  // popUp.querySelector("[data-field=expelled]").textContent = student.expelled;
 
   //PREFECT
   popUp.querySelector("[data-field=winner]").textContent = student.winner;
@@ -403,23 +404,71 @@ function showDetails(student) {
     case "Gryffindor":
       popUp.querySelector("[data-field=image]").style.border =
         " 5px solid var(--gryffindor)";
+      popUp.querySelector(".popup_dialog").style.border =
+        " 5px solid var(--gryffindor)";
       break;
     case "Slytherin":
       popUp.querySelector("[data-field=image]").style.border =
         "5px solid var(--slytherin)";
+      popUp.querySelector(".popup_dialog").style.border =
+        " 5px solid var(--slytherin)";
       break;
     case "Hufflepuff":
       popUp.querySelector("[data-field=image]").style.border =
         "5px solid var(--hufflepuff)";
+      popUp.querySelector(".popup_dialog").style.border =
+        " 5px solid var(--hufflepuff)";
       break;
     case "Ravenclaw":
       popUp.querySelector("[data-field=image]").style.border =
         "5px solid var(--ravenclaw)";
+      popUp.querySelector(".popup_dialog").style.border =
+        " 5px solid var(--ravenclaw)";
       break;
     default:
       popUp.querySelector("[data-field=image]").style.border =
         "5px solid var(--default)";
+      popUp.querySelector(".popup_dialog").style.border =
+        " 5px solid var(--defaul)";
   }
+
+  //EXPELLING
+  document
+    .querySelector(".expelStudent")
+    .addEventListener("click", expellStudent);
+
+  function expellStudent() {
+    //removeEventListeners();
+    let oneStudent = allStudents.splice(allStudents.indexOf(student), 1)[0];
+    expelledStudents.push(oneStudent);
+    console.log(allStudents);
+    console.log(expelledStudents);
+    closePopUp();
+    buildList();
+    document
+      .querySelector(".expelStudent")
+      .removeEventListener("click", expellStudent);
+  }
+
+  // //ENROLL
+  // document
+  //   .querySelector(".enrollStudent")
+  //   .addEventListener("click", enrollStudent);
+
+  // function enrollStudent() {
+  //   // Get the student to enroll from the expelledStudents array
+  //   let oneStudent = expelledStudents.splice(
+  //     expelledStudents.indexOf(student),
+  //     1
+  //   )[0];
+
+  //   allStudents.push(oneStudent);
+
+  //   console.log(allStudents);
+  //   console.log(expelledStudents);
+  //   closePopUp();
+  //   buildList();
+  // }
 }
 
 // DISPLAYING EACH STUDENT IN THE LIST
@@ -530,6 +579,9 @@ function displayStudent(student) {
 
   //HOUSE
   clone.querySelector("[data-field=house]").textContent = student.house;
+
+  //EXPELLED
+  clone.querySelector("[data-field=expelled]").textContent = student.expelled;
 
   // //GENDER
   // clone.querySelector("[data-field=gender]").textContent = student.gender;
