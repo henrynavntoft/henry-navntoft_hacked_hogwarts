@@ -16,10 +16,51 @@
 .filter {
   text-align: center;
   padding: 1rem;
+  border: 1px solid var(--default);
+  border-radius: 2rem;
+  margin: 1rem;
 }
 
-.currentNumber {
+.filter button {
+  cursor: pointer;
+}
+
+.filter button:hover {
+  background-color: var(--highlight);
+}
+
+.searchShow {
   text-align: center;
+}
+
+.searchShow input {
+  padding: 1rem;
+  border-radius: 2rem;
+}
+
+.searchShow button {
+  cursor: pointer;
+  padding: 1rem;
+  border-radius: 2rem;
+}
+
+button {
+  cursor: pointer;
+  padding: 1rem;
+  border-radius: 2rem;
+}
+
+.searchShow button:hover {
+  background-color: var(--highlight);
+}
+
+.numberCount {
+  display: flex;
+  text-align: center;
+  border: 1px solid var(--default);
+  border-radius: 2rem;
+  margin: 1rem;
+  padding: 1rem;
 }
 
 .sortAfter {
@@ -69,25 +110,71 @@ caption {
   caption-side: bottom;
 }
 
-td[data-field="image"] img {
+img {
   border-radius: 2rem;
   max-width: 100%; /* Make images responsive */
 }
 
-#popup {
+.hidden {
+  visibility: hidden;
+}
+
+.modal {
   position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 80%;
-  max-width: 600px;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  padding: 20px;
-  z-index: 9999;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dialog {
+  box-shadow: 1px 1px 10px #333;
+  border-radius: 2rem;
+  padding: 2rem;
+  background-color: var(--highlight);
+  position: relative;
+}
+
+.close_button {
+  position: absolute;
+  right: -0.5em;
+  top: -0.5em;
+  width: 2rem;
 }
 
 tbody {
   cursor: pointer;
+}
+
+#popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup_dialog {
+  box-shadow: 1px 1px 10px #333;
+  border-radius: 2rem;
+  padding: 2rem;
+  background-color: var(--highlight);
+  position: relative;
+}
+
+.closePopUp {
+  position: absolute;
+  right: -0.5em;
+  top: -0.5em;
+  border-radius: 2rem;
+  aspect-ratio: 1/1;
+  width: 2rem;
 }

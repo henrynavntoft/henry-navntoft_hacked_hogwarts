@@ -25,6 +25,7 @@ const Student = {
   house: "",
   stars: false,
   winner: false,
+  expelled: false,
 };
 
 // REGISTER IF BTN AND FILTERS ARE CLICKED/APPLIED - BEEING CALLED IN START FUNCTION
@@ -36,12 +37,31 @@ function registerBtn() {
   document.querySelectorAll("[data-action='sort']").forEach((each) => {
     each.addEventListener("click", selectSort);
   });
+
+  const searchButton = document.querySelector("#searchButton");
+  searchButton.addEventListener("click", searchStudents);
 }
 
 // STARTING THE WHOLE INIT LOOP
 function start() {
   registerBtn();
   loadJSON();
+}
+
+// ----------------------SEARCH------------------
+function searchStudents(student) {
+  const searchInput = document.querySelector("#searchInput");
+  const searchQuery = searchInput.value.toLowerCase();
+
+  console.log(searchQuery);
+
+  const matchingStudents = allStudents.filter(function (student) {
+    const fullName = `${student.firstName} ${student.lastName}`.toLowerCase();
+    return fullName.includes(searchQuery);
+  });
+
+  // Display the matching students
+  displayList(matchingStudents);
 }
 
 // FETCHING THE DATA - PARRALEL FETCHING MAKES TWO VARIABLES
@@ -180,6 +200,8 @@ function filterList(filteredList) {
     filteredList = allStudents.filter(isGryf);
   } else if (settings.filterBy === "Ravenclaw") {
     filteredList = allStudents.filter(isRav);
+  } else if (settings.filterBy === "Expelled") {
+    filteredList = allStudents.filter(isExpelled);
   } else {
     false;
   }
@@ -201,6 +223,12 @@ function isGryf(student) {
 function isRav(student) {
   return student.house === "Ravenclaw";
 }
+
+function isExpelled(student) {
+  return student.expelled === true;
+}
+
+// -----------------------------------------EXPELLING-----------------------------------------
 
 // ------------------------------------------SORTING------------------------------------------
 function selectSort(event) {
@@ -318,13 +346,80 @@ function displayList(student) {
 
   const currentLength = student.length;
   const paragraph = document.querySelector("p.numberOfCurrentStudents");
-  paragraph.textContent = `Number of students is: ${currentLength}`;
+  paragraph.textContent = `Current of students is: ${currentLength}`;
 
   // CLEAR LIST
   document.querySelector("#list tbody").innerHTML = "";
 
   // BUILD NEW LIST
   student.forEach(displayStudent);
+}
+
+// -----------POPUP-------------
+function showDetails(student) {
+  const popUp = document.querySelector("#popup");
+  console.log(popUp);
+  popUp.classList.remove("hidden");
+
+  document.querySelector(".closePopUp").addEventListener("click", closePopUp);
+
+  function closePopUp() {
+    popUp.classList.add("hidden");
+  }
+  // WHAT IS IN THE POP UP
+  popUp.querySelector("[data-field=image]").src = student.image;
+  popUp.querySelector("[data-field=firstName]").textContent = student.firstName;
+  popUp.querySelector("[data-field=middleName]").textContent =
+    student.middleName;
+  popUp.querySelector("[data-field=nickName]").textContent = student.nickName;
+  popUp.querySelector("[data-field=lastName]").textContent = student.lastName;
+  popUp.querySelector("[data-field=house]").textContent = student.house;
+  popUp.querySelector("[data-field=gender]").textContent = student.gender;
+  popUp.querySelector("[data-field=blood]").textContent = student.bloodStatus;
+
+  //PREFECT
+  popUp.querySelector("[data-field=winner]").textContent = student.winner;
+
+  if (student.winner === true) {
+    popUp.querySelector("[data-field=winner]").textContent = "⌛";
+  } else {
+    popUp.querySelector("[data-field=winner]").textContent = "-";
+  }
+
+  //INQ. SQUAD
+  popUp.querySelector("[data-field=stars]").textContent = student.stars;
+
+  if (
+    ((student.house === "slytherin" && student.bloodStatus !== "Half blood") ||
+      student.bloodStatus === "Pure Blood") &&
+    student.stars === true
+  ) {
+    popUp.querySelector("[data-field=stars]").textContent = "⚡";
+  } else {
+    popUp.querySelector("[data-field=stars]").textContent = "-";
+  }
+
+  switch (student.house) {
+    case "Gryffindor":
+      popUp.querySelector("[data-field=image]").style.border =
+        " 5px solid var(--gryffindor)";
+      break;
+    case "Slytherin":
+      popUp.querySelector("[data-field=image]").style.border =
+        "5px solid var(--slytherin)";
+      break;
+    case "Hufflepuff":
+      popUp.querySelector("[data-field=image]").style.border =
+        "5px solid var(--hufflepuff)";
+      break;
+    case "Ravenclaw":
+      popUp.querySelector("[data-field=image]").style.border =
+        "5px solid var(--ravenclaw)";
+      break;
+    default:
+      popUp.querySelector("[data-field=image]").style.border =
+        "5px solid var(--default)";
+  }
 }
 
 // DISPLAYING EACH STUDENT IN THE LIST
@@ -336,15 +431,30 @@ function displayStudent(student) {
 
   // ----- SET CLONE DATA -----
 
-  // STARS
+  // -----------POPUP EVENTLISTENER-------------
+
+  clone
+    .querySelector(".student0")
+    .addEventListener("click", () => showDetails(student));
+  clone
+    .querySelector(".student1")
+    .addEventListener("click", () => showDetails(student));
+  clone
+    .querySelector(".student2")
+    .addEventListener("click", () => showDetails(student));
+  clone
+    .querySelector(".student3")
+    .addEventListener("click", () => showDetails(student));
+
+  // INQ. SQUAD
   if (
     ((student.house === "slytherin" && student.bloodStatus !== "Half blood") ||
       student.bloodStatus === "Pure Blood") &&
     student.stars === true
   ) {
-    clone.querySelector("[data-field=stars]").textContent = "★";
+    clone.querySelector("[data-field=stars]").textContent = "⚡";
   } else {
-    clone.querySelector("[data-field=stars]").textContent = "☆";
+    clone.querySelector("[data-field=stars]").textContent = "-";
   }
 
   clone
@@ -365,11 +475,11 @@ function displayStudent(student) {
     buildList();
   }
 
-  //WINNERS
+  //-------------------------PREFECT-------------------------------
   if (student.winner === true) {
-    clone.querySelector("[data-field=winner]").textContent = "⧗";
+    clone.querySelector("[data-field=winner]").textContent = "⌛";
   } else {
-    clone.querySelector("[data-field=winner]").textContent = "⧖";
+    clone.querySelector("[data-field=winner]").textContent = "-";
   }
 
   clone
@@ -415,21 +525,17 @@ function displayStudent(student) {
   //LASTNAME
   clone.querySelector("[data-field=lastName]").textContent = student.lastName;
 
-  // //MIDDLENAME
-  // clone.querySelector("[data-field=middleName]").textContent =
-  //   student.middleName;
-
   // //NICKNAME
   // clone.querySelector("[data-field=nickName]").textContent = student.nickName;
-
-  //GENDER
-  clone.querySelector("[data-field=gender]").textContent = student.gender;
 
   //HOUSE
   clone.querySelector("[data-field=house]").textContent = student.house;
 
-  // BLOOD STATUS
-  clone.querySelector("[data-field=blood]").textContent = student.bloodStatus;
+  // //GENDER
+  // clone.querySelector("[data-field=gender]").textContent = student.gender;
+
+  // // BLOOD STATUS
+  // clone.querySelector("[data-field=blood]").textContent = student.bloodStatus;
 
   // APPEND THE CLONE
   document.querySelector("#list tbody").appendChild(clone);
@@ -438,7 +544,11 @@ function displayStudent(student) {
 function tryToMakeWinner(selectedStudent) {
   const winners = allStudents.filter((student) => student.winner);
 
+  console.log(winners);
+
   const numberOfWinner = winners.length;
+
+  console.log(numberOfWinner);
 
   const other = winners
     .filter((student) => student.gender === selectedStudent.gender)
@@ -457,26 +567,89 @@ function tryToMakeWinner(selectedStudent) {
   }
 
   function removeOther(other) {
-    removeWinner(other);
-    makeWinner(selectedStudent);
+    document.querySelector("#remove_other").classList.remove("hidden");
+
+    //EVENTLISTENERS
+    document
+      .querySelector("#remove_other .close_button")
+      .addEventListener("click", closeDialog);
+
+    document
+      .querySelector("#remove_other .remove_button")
+      .addEventListener("click", removeStudent);
+
+    //IF USER CHOSE TO IGNORE:
+    function closeDialog() {
+      document.querySelector("#remove_other").classList.add("hidden");
+      document
+        .querySelector("#remove_other .close_button")
+        .removeEventListener("click", closeDialog);
+      document
+        .querySelector("#remove_other .remove_button")
+        .removeEventListener("click", removeStudent);
+    }
+    //IF USER CHOSE TO REMOVE:
+    function removeStudent() {
+      removeWinner(other);
+      makeWinner(selectedStudent);
+      buildList();
+      closeDialog();
+    }
   }
 
   function removeAorB(winnerA, winnerB) {
-    //CHOICE A
-    removeWinner(winnerA);
-    makeWinner(selectedStudent);
+    document.querySelector("#remove_aorb").classList.remove("hidden");
 
-    //CHOICE B
-    removeWinner(winnerB);
-    makeWinner(selectedStudent);
+    //EVENTLISTENERS
+    document
+      .querySelector("#remove_aorb .close_button")
+      .addEventListener("click", closeDialog);
+
+    document
+      .querySelector("#remove_aorb .remove_studentA")
+      .addEventListener("click", removeStudentA);
+
+    document
+      .querySelector("#remove_aorb .remove_studentB")
+      .addEventListener("click", removeStudentB);
+
+    //IF USER CHOSE TO IGNORE:
+    function closeDialog() {
+      document.querySelector("#remove_aorb").classList.add("hidden");
+      document
+        .querySelector("#remove_aorb .close_button")
+        .removeEventListener("click", closeDialog);
+      document
+        .querySelector("#remove_aorb .remove_studentA")
+        .removeEventListener("click", removeStudentA);
+      document
+        .querySelector("#remove_aorb .remove_studentB")
+        .removeEventListener("click", removeStudentB);
+    }
+
+    function removeStudentA() {
+      //CHOICE A
+      removeWinner(winnerA);
+      makeWinner(selectedStudent);
+      buildList();
+      closeDialog();
+    }
+
+    function removeStudentB() {
+      //CHOICE B
+      removeWinner(winnerB);
+      makeWinner(selectedStudent);
+      buildList();
+      closeDialog();
+    }
   }
 
   function removeWinner(winnerStudent) {
     winnerStudent.winner = false;
   }
 
-  function makeWinner(student) {
+  function makeWinner(loserStudent) {
     //if (student.house === "Hufflepuff") {}
-    student.winner = true;
+    loserStudent.winner = true;
   }
 }
