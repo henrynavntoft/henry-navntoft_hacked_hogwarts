@@ -580,8 +580,8 @@ function displayStudent(student) {
   //HOUSE
   clone.querySelector("[data-field=house]").textContent = student.house;
 
-  //EXPELLED
-  clone.querySelector("[data-field=expelled]").textContent = student.expelled;
+  // //EXPELLED
+  // clone.querySelector("[data-field=expelled]").textContent = student.expelled;
 
   // //GENDER
   // clone.querySelector("[data-field=gender]").textContent = student.gender;
