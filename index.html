@@ -14,29 +14,44 @@
 
     <section class="filter">
         <div class="filter-system">
-            <h3>Filter Students By:</h3>
-            <button class="filter" id="Gryffindor" data-action="filter" data-filter="Gryffindor">Gryffindor</button>
-            <button class="filter" id="Slytherin" data-action="filter" data-filter="Slytherin">Slytherin</button>
-            <button class="filter" id="Hufflepuff" data-action="filter" data-filter="Hufflepuff">Hufflepuff</button>
-            <button class="filter" id="Ravenclaw" data-action="filter" data-filter="Ravenclaw">Ravenclaw</button>
-            <button class="filter" id="*" data-action="filter" data-filter="*">All Students</button>
-            <button class="filter" id="Expelled" data-action="filter" data-filter="Expelled">Expelled Students</button>
+            <div>
+                <p class="numberOfGryffindorStudents"></p>
+                <button class="filter" id="Gryffindor" data-action="filter" data-filter="Gryffindor">Gryffindor</button>
+            </div>
+            <div>
+                <p class="numberOfSlytherinStudents"></p>
+                <button class="filter" id="Slytherin" data-action="filter" data-filter="Slytherin">Slytherin</button>
+            </div>
+            <div>
+                <p class="numberOfHufflepuffStudents"></p>
+                <button class="filter" id="Hufflepuff" data-action="filter" data-filter="Hufflepuff">Hufflepuff</button>
+            </div>
+            <div>
+                <p class="numberOfRavenclawStudents"></p>
+                <button class="filter" id="Ravenclaw" data-action="filter" data-filter="Ravenclaw">Ravenclaw</button>
+            </div>
+            <div>
+                <p class="numberOfTotalStudents"></p>
+                <button class="filter" id="*" data-action="filter" data-filter="*">Enrolled Students</button>
+            </div>
+            <div>
+                <p class="numberOfExpelledStudents"></p>
+                <button class="filter" id="Expelled" data-action="filter" data-filter="Expelled">Expelled
+                    Students</button>
+            </div>
         </div>
-    </section>
-
-    <section class="numberCount">
-        <p class="numberOfCurrentStudents"></p>
-        <p class="numberOfTotalStudents"></p>
-        <p class="numberOfGryffindorStudents"></p>
-        <p class="numberOfHufflepuffStudents"></p>
-        <p class="numberOfRavenclawStudents"></p>
-        <p class="numberOfSlytherinStudents"></p>
-        <p class="numberOfExpelledStudents"></p>
+        <div class="spec">
+            <p class="numberOfCurrentStudents"></p>
+        </div>
     </section>
 
     <section class="searchShow">
         <input type="text" id="searchInput" placeholder="Search for student...">
         <button id="searchButton">Search</button>
+    </section>
+
+    <section class="hacking">
+        <button class="hackButton">Hack The System</button>
     </section>
 
     <table id="list">
@@ -51,9 +66,9 @@
                 <th data-action="sort" data-sort-direction="desc" data-sort="house">House</th>
                 <!-- <th>Gender</th>
                 <th>Blood</th> -->
+                <!-- <td>Expelled</td> -->
                 <th>Prefect</th>
                 <th>Inq. Squad</th>
-                <!-- <td>Expelled</td> -->
             </tr>
         </thead>
         <tbody>
@@ -72,10 +87,9 @@
             <td class="student3" data-field="house">House</td>
             <!-- <td data-field="gender">Gender</td>
             <td data-field="blood">Blood</td> -->
-
+            <!-- <td data-field="expelled">Expelled</td> -->
             <td data-field="winner">Prefect</td>
             <td data-field="stars">Inq. Squad</td>
-            <!-- <td data-field="expelled">Expelled</td> -->
         </tr>
     </template>
 
@@ -83,27 +97,37 @@
         <div class="popup_dialog">
             <button class="closePopUp">X</button>
             <article class="popup_article">
-                <img data-field="image" src="" alt="">
-                <p>Name:</p>
-                <div>
-                    <p data-field="firstName"></p>
-                    <p data-field="middleName"></p>
-                    <p data-field="nickName"></p>
-                    <p data-field="lastName"></p>
+                <div class="student_info">
+                    <img data-field="image" src="" alt="">
+                    <div class="name_container">
+                        <div>
+                            <p data-field="firstName"></p>
+                            <p data-field="middleName"></p>
+                            <p data-field="nickName"></p>
+                            <p data-field="lastName"></p>
+                        </div>
+                    </div>
                 </div>
-                <p>Gender:</p>
-                <p data-field="gender"></p>
-                <p>House:</p>
-                <p data-field="house"></p>
-                <p>Blood:</p>
-                <p data-field="blood"></p>
-                <br>
-                <p>Prefect:</p>
-                <p data-field="winner"></p>
-                <br>
-                <p>Inq. Squad:</p>
-                <p class="inqPop" data-field="stars"></p>
-                <br>
+                <div class="student_info">
+                    <p>Gender:</p>
+                    <p data-field="gender"></p>
+                </div>
+                <div class="student_info">
+                    <p>House:</p>
+                    <p data-field="house"></p>
+                </div>
+                <div class="student_info">
+                    <p>Blood:</p>
+                    <p data-field="blood"></p>
+                </div>
+                <div class="student_info">
+                    <p>Prefect:</p>
+                    <p data-field="winner"></p>
+                </div>
+                <div class="student_info">
+                    <p>Inq. Squad:</p>
+                    <p data-field="stars"></p>
+                </div>
                 <button class="expelStudent">Expel</button>
                 <!-- <button class="enrollStudent">Enroll</button> -->
             </article>
@@ -121,20 +145,6 @@
         </div>
     </div>
 
-    <!-- I don't need this, because there will only be two options anyways // boy or girl -->
-    <!-- <div id="remove_aorb" class="modal hidden">
-        <div class="dialog">
-            <button class="close_button">X</button>
-            <h1>Warning!</h1>
-            <br>
-            <p>Lorem ipsum dolor sit amet.</p>
-            <br>
-            <div>
-                <button class="remove_studentA">Remove Student A</button>
-                <button class="remove_studentB">Remove Student B</button>
-            </div>
-        </div>
-    </div> -->
 
 </body>
 

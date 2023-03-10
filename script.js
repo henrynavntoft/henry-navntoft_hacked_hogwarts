@@ -206,7 +206,7 @@ function filterList(filteredList) {
   } else if (settings.filterBy === "Expelled") {
     filteredList = expelledStudents;
   } else {
-    false;
+    filteredList = allStudents;
   }
   return filteredList;
 }
@@ -316,7 +316,7 @@ function displayList(student) {
   const expelledStudentsLength = expelledStudents.length;
 
   const totalParagraph = document.querySelector("p.numberOfTotalStudents");
-  totalParagraph.textContent = `Total number of students is: ${totalStudents}`;
+  totalParagraph.textContent = `Number of enrolled students is: ${totalStudents}`;
 
   const gryffindorParagraph = document.querySelector(
     "p.numberOfGryffindorStudents"
@@ -345,7 +345,7 @@ function displayList(student) {
 
   const currentLength = student.length;
   const paragraph = document.querySelector("p.numberOfCurrentStudents");
-  paragraph.textContent = `Current of students is: ${currentLength}`;
+  paragraph.textContent = `Current number of students is: ${currentLength}`;
 
   // CLEAR LIST
   document.querySelector("#list tbody").innerHTML = "";
@@ -358,7 +358,6 @@ function displayList(student) {
 function showDetails(student) {
   const popUp = document.querySelector("#popup");
   const popUpContent = document.querySelector("#popup");
-  console.log(popUp);
   popUp.classList.remove("hidden");
 
   document.querySelector(".closePopUp").addEventListener("click", closePopUp);
@@ -388,6 +387,7 @@ function showDetails(student) {
   }
 
   //INQ. SQUAD
+
   popUp.querySelector("[data-field=stars]").textContent = student.stars;
 
   if (
@@ -400,6 +400,25 @@ function showDetails(student) {
     popUp.querySelector("[data-field=stars]").textContent = "-";
   }
 
+  // popUp
+  //   .querySelector("[data-field=stars]")
+  //   .addEventListener("click", toggleStars);
+
+  // function toggleStars() {
+  //   if (
+  //     ((student.house === "slytherin" &&
+  //       student.bloodStatus !== "Half blood") ||
+  //       student.bloodStatus === "Pure Blood") &&
+  //     student.stars === true
+  //   ) {
+  //     student.stars = false;
+  //   } else {
+  //     student.stars = true;
+  //   }
+  //   buildList();
+  // }
+
+  //COLORS BORDERS
   switch (student.house) {
     case "Gryffindor":
       popUp.querySelector("[data-field=image]").style.border =
@@ -441,6 +460,7 @@ function showDetails(student) {
     //removeEventListeners();
     let oneStudent = allStudents.splice(allStudents.indexOf(student), 1)[0];
     expelledStudents.push(oneStudent);
+
     console.log(allStudents);
     console.log(expelledStudents);
     closePopUp();
@@ -704,4 +724,32 @@ function tryToMakeWinner(selectedStudent) {
     //if (student.house === "Hufflepuff") {}
     loserStudent.winner = true;
   }
+}
+
+//------------HACKING------------------
+
+document.querySelector(".hackButton").addEventListener("click", hackTheSystem);
+
+function hackTheSystem() {
+  console.log("hack");
+  // Insert yourself
+  const mySelfStudent = {
+    firstName: "Henry",
+    lastName: "Navntoft",
+    middleName: "Lundberg",
+    nickName: "",
+    gender: "Boy",
+    image: "",
+    house: "Hufflepuff",
+    bloodStatus: "Pure Blood",
+    stars: false,
+    winner: false,
+    expelled: false,
+  };
+  allStudents.push(mySelfStudent);
+
+  console.log(
+    "You have been added to the student list and the system has been hacked!"
+  );
+  buildList();
 }

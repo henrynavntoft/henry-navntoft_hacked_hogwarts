@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
+
 :root {
   --gryffindor: #740001;
   --slytherin: #1a472a;
@@ -10,15 +12,39 @@
 * {
   box-sizing: border-box;
   margin: 0;
-  font-family: "Courier New", Courier, monospace;
+  font-family: "Bebas Neue", cursive;
+  font-size: 1rem;
+}
+
+.hacking {
+  text-align: center;
+  margin: 0.5rem auto;
+}
+
+.hacking button {
+  padding: 0.5rem;
 }
 
 .filter {
+  padding: 0.5rem;
+  margin: 0.5rem auto;
+  width: 80%;
   text-align: center;
-  padding: 1rem;
+}
+
+.filter-system {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.filter div {
   border: 1px solid var(--default);
-  border-radius: 2rem;
-  margin: 1rem;
+  margin: 0.5rem;
+  padding: 0.5rem;
+}
+
+.spec {
+  text-align: center;
 }
 
 .filter button {
@@ -31,30 +57,20 @@
 
 .searchShow {
   text-align: center;
+  margin: 0.5rem auto;
 }
 
 .searchShow input {
-  padding: 1rem;
-  border-radius: 2rem;
+  padding: 0.5rem;
 }
 
 .searchShow button {
   cursor: pointer;
-  padding: 1rem;
-  border-radius: 2rem;
+  padding: 0.5rem;
 }
 
 .searchShow button:hover {
   background-color: var(--highlight);
-}
-
-.numberCount {
-  display: flex;
-  text-align: center;
-  border: 1px solid var(--default);
-  border-radius: 2rem;
-  margin: 1rem;
-  padding: 1rem;
 }
 
 .sortAfter {
@@ -72,16 +88,13 @@
 table {
   margin: 2rem auto; /* Center the table and add some space around it */
   width: 80%;
-  border-collapse: collapse;
-  border: 2px solid rgb(200, 200, 200);
-  letter-spacing: 1px;
-  font-size: 1rem;
+  border: 1px solid rgb(200, 200, 200);
 }
 
 td,
 th {
   border: 1px solid rgb(190, 190, 190);
-  padding: 10px;
+  padding: 0.5rem;
   text-align: center; /* Center the content of cells */
   cursor: pointer;
 }
@@ -99,15 +112,23 @@ tr:nth-child(even) {
   background-color: #eee;
 }
 
+tbody {
+  cursor: pointer;
+}
+
 caption {
-  padding: 10rem;
+  padding: 0.5rem;
   caption-side: bottom;
 }
 
 img {
-  border-radius: 2rem;
-  max-width: 100%; /* Make images responsive */
+  border-radius: 50%;
+  max-width: 100%;
+  outline-offset: -8px;
+  outline: 4px solid var(--default);
 }
+
+/* MODAL FOR PREFECT */
 
 .hidden {
   visibility: hidden;
@@ -119,7 +140,7 @@ img {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.7);
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -127,7 +148,6 @@ img {
 
 .dialog {
   box-shadow: 1px 1px 10px #333;
-  border-radius: 2rem;
   padding: 2rem;
   background-color: var(--highlight);
   position: relative;
@@ -140,52 +160,68 @@ img {
   width: 2rem;
 }
 
-tbody {
-  cursor: pointer;
-}
+/* POPUP STUDENT */
 
+/* Popup container */
 #popup {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-button {
-  cursor: pointer;
-}
-
-#popup .expelStudent {
-  padding: 1rem;
-  cursor: pointer;
-  border-radius: 2rem;
-}
-
-#popup .unexpelStudent {
-  padding: 1rem;
-  cursor: pointer;
-  border-radius: 2rem;
-}
-
-.popup_dialog {
+#popup .popup_dialog {
   box-shadow: 1px 1px 10px #333;
-  border-radius: 2rem;
   padding: 2rem;
   background-color: var(--highlight);
   position: relative;
   width: 50%;
+  display: flex;
+  flex-direction: column;
 }
 
-.closePopUp {
+#popup .popup_dialog .closePopUp {
   position: absolute;
   right: -0.5em;
   top: -0.5em;
-  border-radius: 2rem;
   aspect-ratio: 1/1;
   width: 2rem;
+  cursor: pointer;
+}
+
+#popup .popup_article {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+#popup .popup_article .student_info {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+#popup .popup_article .name_container {
+  display: flex;
+  flex-direction: column;
+}
+
+#popup .popup_article .name_container p:first-child {
+  margin-bottom: 0.5rem;
+}
+
+#popup .popup_article img {
+  max-width: 10rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+#popup .popup_article button {
+  padding: 0.5rem;
+  cursor: pointer;
 }
