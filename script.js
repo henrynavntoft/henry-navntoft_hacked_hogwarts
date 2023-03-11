@@ -31,6 +31,20 @@ const Student = {
   expelled: false,
 };
 
+// FOR HACKING -- RANDOM BLOOD
+function randomBloodStatus() {
+  allStudents.forEach(function (student) {
+    if (student.bloodStatus === "Pure Blood") {
+      const bloodStatuses = ["Pure Blood", "Half Blood", "Muggle Blood"];
+      const randomBloodStatus =
+        bloodStatuses[Math.floor(Math.random() * bloodStatuses.length)];
+      student.bloodStatus = randomBloodStatus;
+    } else {
+      student.bloodStatus = "Pure Blood";
+    }
+  });
+}
+
 // REGISTER IF BTN AND FILTERS ARE CLICKED/APPLIED - BEEING CALLED IN START FUNCTION
 function registerBtn() {
   document.querySelectorAll("[data-action='filter']").forEach((each) => {
@@ -375,7 +389,9 @@ function showDetails(student) {
   popUp.querySelector("[data-field=house]").textContent = student.house;
   popUp.querySelector("[data-field=gender]").textContent = student.gender;
   popUp.querySelector("[data-field=blood]").textContent = student.bloodStatus;
-  // popUp.querySelector("[data-field=expelled]").textContent = student.expelled;
+
+  // EXPELLED
+  popUp.querySelector("[data-field=expelled]").textContent = student.expelled;
 
   //PREFECT
   popUp.querySelector("[data-field=winner]").textContent = student.winner;
@@ -452,22 +468,35 @@ function showDetails(student) {
   }
 
   //EXPELLING
-  document
-    .querySelector(".expelStudent")
-    .addEventListener("click", expellStudent);
+  popUp.querySelector(".expelStudent").addEventListener("click", expellStudent);
 
   function expellStudent() {
-    //removeEventListeners();
-    let oneStudent = allStudents.splice(allStudents.indexOf(student), 1)[0];
-    expelledStudents.push(oneStudent);
+    if (student.firstName === "Henry" && student.lastName === "Navntoft") {
+      // Show warning message that you cannot be expelled
+      alert("Henry Navntoft can't be expelled!");
+    } else {
+      let oneStudent = allStudents.splice(allStudents.indexOf(student), 1)[0];
+      oneStudent.expelled = true;
+      expelledStudents.push(oneStudent);
 
-    console.log(allStudents);
-    console.log(expelledStudents);
-    closePopUp();
-    buildList();
-    document
-      .querySelector(".expelStudent")
-      .removeEventListener("click", expellStudent);
+      console.log(allStudents);
+      console.log(expelledStudents);
+      closePopUp();
+      buildList();
+      popUp
+        .querySelector(".expelStudent")
+        .removeEventListener("click", expellStudent);
+    }
+
+    // check if the student has already been expelled and disable the "Expel Student" button
+    if (student.expelled === true) {
+      popUp.querySelector("[data-field=expelled]").textContent = "True";
+      popUp
+        .querySelector(".expelStudent")
+        .removeEventListener("click", expellStudent);
+    } else {
+      popUp.querySelector("[data-field=expelled]").textContent = "False";
+    }
   }
 
   // //ENROLL
@@ -614,28 +643,37 @@ function displayStudent(student) {
 }
 
 function tryToMakeWinner(selectedStudent) {
-  const winners = allStudents.filter((student) => student.winner);
+  // Get all the winners
+  const allWinners = allStudents.filter((student) => student.winner);
 
-  console.log(winners);
+  // Get the number of winners of the same gender and house
+  const sameGenderHouseWinners = allWinners.filter(
+    (student) =>
+      student.gender === selectedStudent.gender &&
+      student.house === selectedStudent.house
+  );
 
-  const numberOfWinner = winners.length;
-
-  console.log(numberOfWinner);
-
-  const other = winners
-    .filter((student) => student.gender === selectedStudent.gender)
-    .shift();
-
-  console.log(other);
-
-  if (other !== undefined) {
-    console.log("Max 1 winner of each gender");
-    removeOther(other);
-  } else if (numberOfWinner >= 2) {
-    console.log("Max 2 winner");
-    removeAorB(winners[0], winners[1]);
-  } else {
-    makeWinner(selectedStudent);
+  // Check if there is already a winner of the same gender and house
+  if (sameGenderHouseWinners.length >= 1) {
+    console.log("Max 1 winner of each gender in each house");
+    removeOther(sameGenderHouseWinners[0]);
+  }
+  // If there is no winner of the same gender and house, check if there is a winner of the opposite gender and house
+  else {
+    const oppositeGenderHouseWinners = allWinners.filter(
+      (student) =>
+        student.gender !== selectedStudent.gender &&
+        student.house === selectedStudent.house
+    );
+    // Check if there is already a winner of the opposite gender and house
+    if (oppositeGenderHouseWinners.length >= 2) {
+      console.log("Max 1 winner of each gender in each house");
+      removeAorB(oppositeGenderHouseWinners[0], selectedStudent);
+    }
+    // If there is no winner of either gender in the same house, make the student a winner
+    else {
+      makeWinner(selectedStudent);
+    }
   }
 
   function removeOther(other) {
@@ -731,25 +769,40 @@ function tryToMakeWinner(selectedStudent) {
 document.querySelector(".hackButton").addEventListener("click", hackTheSystem);
 
 function hackTheSystem() {
-  console.log("hack");
-  // Insert yourself
-  const mySelfStudent = {
-    firstName: "Henry",
-    lastName: "Navntoft",
-    middleName: "Lundberg",
-    nickName: "",
-    gender: "Boy",
-    image: "",
-    house: "Hufflepuff",
-    bloodStatus: "Pure Blood",
-    stars: false,
-    winner: false,
-    expelled: false,
-  };
-  allStudents.push(mySelfStudent);
-
-  console.log(
-    "You have been added to the student list and the system has been hacked!"
+  // Check if student already exists in array
+  const studentExists = allStudents.some(
+    (student) =>
+      student.firstName === "Henry" && student.lastName === "Navntoft"
   );
+
+  if (studentExists) {
+    console.log("You have already been added to the student list.");
+  } else {
+    //CHANGE BACKGROUND COLOR FOR HACKING EFFECT
+    document.querySelector("body").style.backgroundColor = "var(--highlight)";
+
+    // Insert yourself
+    const mySelfStudent = {
+      firstName: "Henry",
+      lastName: "Navntoft",
+      middleName: "Lundberg",
+      nickName: "",
+      gender: "Boy",
+      image: "images/navntoft_h.png",
+      house: "Hufflepuff",
+      bloodStatus: "Pure Blood",
+      stars: false,
+      winner: false,
+      expelled: false,
+    };
+    allStudents.push(mySelfStudent);
+
+    console.log(
+      "You have been added to the student list and the system has been hacked!"
+    );
+  }
+
+  randomBloodStatus();
+
   buildList();
 }
