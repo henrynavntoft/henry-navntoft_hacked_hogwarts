@@ -1,23 +1,26 @@
 // "use strict" is a directive that enables strict mode in JavaScript. When this directive is used, the JavaScript code is executed in strict mode, which enforces a stricter set of rules and provides better error handling.
 "use strict";
 
-// TELLING TO RUN THE FUNCTION START WHEN DOM IS LOADED
+// ---------------------TELLING TO RUN THE FUNCTION START WHEN DOM IS LOADED
 window.addEventListener("DOMContentLoaded", start);
 
-// ARRAY WHERE ALL STUDENTS WILL BE PUSHED TOO
+// --------------------ARRAY WHERE ALL STUDENTS WILL BE PUSHED TOO
 let allStudents = [];
 
-// ARRAY FOR EXPELLED STUDENTS
+// ------------------ARRAY WHER ALL EXPELLED STUDENTS WILL BE PUSHED TOO
 let expelledStudents = [];
 
-//GLOBAL OBJECT FOR SETTINGS
+// Set up a global variable to hold the interval ID
+let interval;
+
+//-------------------GLOBAL OBJECT FOR SETTINGS
 const settings = {
   filter: "all",
   sortBy: "house",
   sortDir: "asc",
 };
 
-//PROTOTYPE FOR EACH STUDENT
+//------------------------------------PROTOTYPE FOR EACH STUDENT--------------------------------------
 const Student = {
   firstName: "",
   lastName: "",
@@ -31,41 +34,7 @@ const Student = {
   expelled: false,
 };
 
-// FOR HACKING -- RANDOM BLOOD
-function randomBloodStatus() {
-  allStudents.forEach(function (student) {
-    if (student.bloodStatus === "Pure Blood") {
-      const bloodStatuses = ["Pure Blood", "Half Blood", "Muggle Blood"];
-      const randomBloodStatus =
-        bloodStatuses[Math.floor(Math.random() * bloodStatuses.length)];
-      student.bloodStatus = randomBloodStatus;
-    } else {
-      student.bloodStatus = "Pure Blood";
-    }
-  });
-}
-
-// REGISTER IF BTN AND FILTERS ARE CLICKED/APPLIED - BEEING CALLED IN START FUNCTION
-function registerBtn() {
-  document.querySelectorAll("[data-action='filter']").forEach((each) => {
-    each.addEventListener("click", selectFilter);
-  });
-
-  document.querySelectorAll("[data-action='sort']").forEach((each) => {
-    each.addEventListener("click", selectSort);
-  });
-
-  const searchButton = document.querySelector("#searchButton");
-  searchButton.addEventListener("click", searchStudents);
-}
-
-// STARTING THE WHOLE INIT LOOP
-function start() {
-  registerBtn();
-  loadJSON();
-}
-
-// ----------------------SEARCH------------------
+// ---------------------------------SEARCH------------------------------
 function searchStudents(student) {
   const searchInput = document.querySelector("#searchInput");
   const searchQuery = searchInput.value.toLowerCase();
@@ -81,7 +50,106 @@ function searchStudents(student) {
   displayList(matchingStudents);
 }
 
-// FETCHING THE DATA - PARRALEL FETCHING MAKES TWO VARIABLES
+//----------------------------HACKING------------------------------
+
+function hackTheSystem() {
+  let hacked = true;
+  console.log(hacked);
+  // Check if student already exists in array
+  const studentExists = allStudents.some(
+    (student) =>
+      student.firstName === "Henry" && student.lastName === "Navntoft"
+  );
+
+  if (studentExists === true) {
+    console.log("You have already been added to the student list.");
+  } else {
+    //CHANGE BACKGROUND COLOR FOR HACKING EFFECT
+    document.querySelector("body").style.backgroundColor = "var(--highlight)";
+
+    // Insert yourself
+    const mySelfStudent = {
+      firstName: "Henry",
+      lastName: "Navntoft",
+      middleName: "Lundberg",
+      nickName: "",
+      gender: "Boy",
+      image: "images/navntoft_h.png",
+      house: "Hufflepuff",
+      bloodStatus: "Pure Blood",
+      stars: false,
+      winner: false,
+      expelled: false,
+    };
+    allStudents.push(mySelfStudent);
+
+    console.log(
+      "You have been added to the student list and the system has been hacked!"
+    );
+  }
+
+  randomBloodStatus();
+
+  startCheckingInq();
+
+  buildList();
+}
+
+// -------------------------------FOR HACKING -- RANDOM BLOOD STATUS ---------------------------------
+function randomBloodStatus() {
+  allStudents.forEach(function (student) {
+    if (student.bloodStatus === "Pure Blood") {
+      const bloodStatuses = ["Pure Blood", "Half Blood", "Muggle Blood"];
+      const randomBloodStatus =
+        bloodStatuses[Math.floor(Math.random() * bloodStatuses.length)];
+      student.bloodStatus = randomBloodStatus;
+    } else {
+      student.bloodStatus = "Pure Blood";
+    }
+  });
+}
+
+// -------------------------BREAK INQ SQUAD------------------------
+
+function startCheckingInq() {
+  // Set the interval to run every 2 seconds (adjust as needed)
+  interval = setInterval(removeInq, 2000);
+}
+
+function removeInq() {
+  allStudents.forEach(function (student) {
+    if (student.stars === true) {
+      student.stars = false;
+      buildList();
+    }
+  });
+}
+
+// --------------------------REGISTER IF BTN AND FILTERS ARE CLICKED/APPLIED - BEEING CALLED IN START FUNCTION-----------------
+function registerBtn() {
+  document.querySelectorAll("[data-action='filter']").forEach((each) => {
+    each.addEventListener("click", selectFilter);
+  });
+
+  document.querySelectorAll("[data-action='sort']").forEach((each) => {
+    each.addEventListener("click", selectSort);
+  });
+
+  const searchButton = document.querySelector("#searchButton");
+  searchButton.addEventListener("click", searchStudents);
+
+  document
+    .querySelector(".hackButton")
+    .addEventListener("click", hackTheSystem);
+}
+
+// -------------------------------STARTING THE WHOLE INIT LOOP--------------------------
+function start() {
+  registerBtn();
+  loadJSON();
+}
+
+// ------------------------------FETCHING THE DATA - PARRALEL FETCHING TAKES TWO PARAMETERS----------------
 async function loadJSON() {
   let [studentData, bloodData] = await Promise.all([
     fetch("https://petlatkea.dk/2021/hogwarts/students.json").then((response) =>
@@ -94,7 +162,7 @@ async function loadJSON() {
   prepareObjects(studentData, bloodData);
 }
 
-// PREPARING THE OBJECTS
+// -------------------------------------------PREPARING THE OBJECTS---------------------------------------
 function prepareObjects(studentData, bloodData) {
   studentData.forEach((jsonObject) => {
     //  we create an object based on the prototype made before
@@ -245,8 +313,6 @@ function isExpelled(student) {
   return student.expelled === true;
 }
 
-// -----------------------------------------EXPELLING-----------------------------------------
-
 // ------------------------------------------SORTING------------------------------------------
 function selectSort(event) {
   const sortBy = event.target.dataset.sort;
@@ -302,7 +368,140 @@ function sortList(sortedList) {
   return sortedList;
 }
 
-// BOTH SORT AND FILTER PUSH TO LIST
+// ------------------------ PREFECTS  ----------------------------------------
+function makePrefect(selectedStudent) {
+  // Get all the winners
+  const allWinners = allStudents.filter((student) => student.winner);
+
+  // Get the number of winners of the same gender and house
+  const sameGenderHouseWinners = allWinners.filter(
+    (student) =>
+      student.gender === selectedStudent.gender &&
+      student.house === selectedStudent.house
+  );
+
+  // Check if there is already a winner of the same gender and house
+  if (sameGenderHouseWinners.length >= 1) {
+    console.log("Max 1 prefect of each gender in each house");
+    removeOther(sameGenderHouseWinners[0]);
+  }
+  // If there is no winner of the same gender and house, check if there is a winner of the opposite gender and house
+  else {
+    const oppositeGenderHouseWinners = allWinners.filter(
+      (student) =>
+        student.gender !== selectedStudent.gender &&
+        student.house === selectedStudent.house
+    );
+    // Check if there is already a winner of the opposite gender and house
+    if (oppositeGenderHouseWinners.length >= 2) {
+      console.log("Max 1 prefect of each gender in each house");
+      removeOther(oppositeGenderHouseWinners[0], selectedStudent);
+    }
+    // If there is no winner of either gender in the same house, make the student a winner
+    else {
+      makeWinner(selectedStudent);
+    }
+  }
+
+  function removeOther(other) {
+    document.querySelector("#remove_other").classList.remove("hidden");
+
+    //EVENTLISTENERS
+    document
+      .querySelector("#remove_other .close_button")
+      .addEventListener("click", closeDialog);
+
+    document
+      .querySelector("#remove_other .remove_button")
+      .addEventListener("click", removeStudent);
+
+    document.querySelector(
+      "#remove_aorb [data-field=otherwinner]"
+    ).textContent = other.firstName;
+
+    //IF USER CHOSE TO IGNORE:
+    function closeDialog() {
+      document.querySelector("#remove_other").classList.add("hidden");
+      document
+        .querySelector("#remove_other .close_button")
+        .removeEventListener("click", closeDialog);
+      document
+        .querySelector("#remove_other .remove_button")
+        .removeEventListener("click", removeStudent);
+    }
+    //IF USER CHOSE TO REMOVE:
+    function removeStudent() {
+      removeWinner(other);
+      makeWinner(selectedStudent);
+      buildList();
+      closeDialog();
+    }
+  }
+
+  // function removeAorB(winnerA, winnerB) {
+  //   document.querySelector("#remove_aorb").classList.remove("hidden");
+
+  //   //EVENTLISTENERS
+  //   document
+  //     .querySelector("#remove_aorb .close_button")
+  //     .addEventListener("click", closeDialog);
+
+  //   document
+  //     .querySelector("#remove_aorb .remove_studentA")
+  //     .addEventListener("click", removeStudentA);
+
+  //   document
+  //     .querySelector("#remove_aorb .remove_studentB")
+  //     .addEventListener("click", removeStudentB);
+
+  //   document.querySelector("#remove_aorb [data-field=winnerA]").textContent =
+  //     winnerA.firstName;
+
+  //   document.querySelector("#remove_aorb [data-field=winnerB]").textContent =
+  //     winnerB.firstName;
+
+  //   //IF USER CHOSE TO IGNORE:
+  //   function closeDialog() {
+  //     document.querySelector("#remove_aorb").classList.add("hidden");
+  //     document
+  //       .querySelector("#remove_aorb .close_button")
+  //       .removeEventListener("click", closeDialog);
+  //     document
+  //       .querySelector("#remove_aorb .remove_studentA")
+  //       .removeEventListener("click", removeStudentA);
+  //     document
+  //       .querySelector("#remove_aorb .remove_studentB")
+  //       .removeEventListener("click", removeStudentB);
+  //   }
+
+  //   function removeStudentA() {
+  //     //CHOICE A
+  //     removeWinner(winnerA);
+  //     makeWinner(selectedStudent);
+  //     buildList();
+  //     closeDialog();
+  //   }
+
+  //   function removeStudentB() {
+  //     //CHOICE B
+  //     removeWinner(winnerB);
+  //     makeWinner(selectedStudent);
+  //     buildList();
+  //     closeDialog();
+  //   }
+  // }
+
+  function removeWinner(winnerStudent) {
+    winnerStudent.winner = false;
+  }
+
+  function makeWinner(loserStudent) {
+    //if (student.house === "Hufflepuff") {}
+    loserStudent.winner = true;
+  }
+}
+
+// --------------------------BOTH SORT AND FILTER PUSH TO LIST-------------------------
 function buildList() {
   const currentList = filterList(allStudents);
   const sortedList = sortList(currentList);
@@ -310,7 +509,7 @@ function buildList() {
   displayList(sortedList);
 }
 
-// DISPLAYING THE WHOLE LIST
+// ---------------------------------DISPLAYING THE WHOLE LIST------------------------------
 function displayList(student) {
   console.log(student);
 
@@ -368,8 +567,8 @@ function displayList(student) {
   student.forEach(displayStudent);
 }
 
-// -----------POPUP-------------
-function showDetails(student) {
+// ------------------------------------DISPLAY EACH STUDENT IN POPUP---------------------------
+function showPopUp(student) {
   const popUp = document.querySelector("#popup");
   const popUpContent = document.querySelector("#popup");
   popUp.classList.remove("hidden");
@@ -416,24 +615,6 @@ function showDetails(student) {
     popUp.querySelector("[data-field=stars]").textContent = "-";
   }
 
-  // popUp
-  //   .querySelector("[data-field=stars]")
-  //   .addEventListener("click", toggleStars);
-
-  // function toggleStars() {
-  //   if (
-  //     ((student.house === "slytherin" &&
-  //       student.bloodStatus !== "Half blood") ||
-  //       student.bloodStatus === "Pure Blood") &&
-  //     student.stars === true
-  //   ) {
-  //     student.stars = false;
-  //   } else {
-  //     student.stars = true;
-  //   }
-  //   buildList();
-  // }
-
   //COLORS BORDERS
   switch (student.house) {
     case "Gryffindor":
@@ -467,60 +648,42 @@ function showDetails(student) {
         " 5px solid var(--defaul)";
   }
 
-  //EXPELLING
+  //---------------------------EXPELLING------------------------------
   popUp.querySelector(".expelStudent").addEventListener("click", expellStudent);
 
   function expellStudent() {
     if (student.firstName === "Henry" && student.lastName === "Navntoft") {
-      // Show warning message that you cannot be expelled
-      alert("Henry Navntoft can't be expelled!");
+      // Show warning message that i cannot be expelled
+      console.log("Henry Navntoft can't be expelled!");
     } else {
       let oneStudent = allStudents.splice(allStudents.indexOf(student), 1)[0];
       oneStudent.expelled = true;
+      oneStudent.winner = false;
+      oneStudent.stars = false;
       expelledStudents.push(oneStudent);
-
-      console.log(allStudents);
-      console.log(expelledStudents);
-      closePopUp();
-      buildList();
-      popUp
-        .querySelector(".expelStudent")
-        .removeEventListener("click", expellStudent);
     }
 
     // check if the student has already been expelled and disable the "Expel Student" button
-    if (student.expelled === true) {
-      popUp.querySelector("[data-field=expelled]").textContent = "True";
-      popUp
-        .querySelector(".expelStudent")
-        .removeEventListener("click", expellStudent);
-    } else {
-      popUp.querySelector("[data-field=expelled]").textContent = "False";
-    }
+    console.log(allStudents);
+    console.log(expelledStudents);
+    closePopUp();
+    buildList();
+    popUp
+      .querySelector(".expelStudent")
+      .removeEventListener("click", expellStudent);
   }
 
-  // //ENROLL
-  // document
-  //   .querySelector(".enrollStudent")
-  //   .addEventListener("click", enrollStudent);
-
-  // function enrollStudent() {
-  //   // Get the student to enroll from the expelledStudents array
-  //   let oneStudent = expelledStudents.splice(
-  //     expelledStudents.indexOf(student),
-  //     1
-  //   )[0];
-
-  //   allStudents.push(oneStudent);
-
-  //   console.log(allStudents);
-  //   console.log(expelledStudents);
-  //   closePopUp();
-  //   buildList();
-  // }
+  if (student.expelled === true) {
+    popUp.querySelector("[data-field=expelled]").textContent = "True";
+    popUp
+      .querySelector(".expelStudent")
+      .removeEventListener("click", expellStudent);
+  } else {
+    popUp.querySelector("[data-field=expelled]").textContent = "False";
+  }
 }
 
-// DISPLAYING EACH STUDENT IN THE LIST
+// ------------------------DISPLAYING EACH STUDENT IN THE LIST----------------------
 function displayStudent(student) {
   // CREATE CLONE
   const clone = document
@@ -533,16 +696,16 @@ function displayStudent(student) {
 
   clone
     .querySelector(".student0")
-    .addEventListener("click", () => showDetails(student));
+    .addEventListener("click", () => showPopUp(student));
   clone
     .querySelector(".student1")
-    .addEventListener("click", () => showDetails(student));
+    .addEventListener("click", () => showPopUp(student));
   clone
     .querySelector(".student2")
-    .addEventListener("click", () => showDetails(student));
+    .addEventListener("click", () => showPopUp(student));
   clone
     .querySelector(".student3")
-    .addEventListener("click", () => showDetails(student));
+    .addEventListener("click", () => showPopUp(student));
 
   // INQ. SQUAD
   if (
@@ -588,7 +751,7 @@ function displayStudent(student) {
     if (student.winner === true) {
       student.winner = false;
     } else {
-      tryToMakeWinner(student);
+      makePrefect(student);
     }
     buildList();
   }
@@ -640,169 +803,4 @@ function displayStudent(student) {
 
   // APPEND THE CLONE
   document.querySelector("#list tbody").appendChild(clone);
-}
-
-function tryToMakeWinner(selectedStudent) {
-  // Get all the winners
-  const allWinners = allStudents.filter((student) => student.winner);
-
-  // Get the number of winners of the same gender and house
-  const sameGenderHouseWinners = allWinners.filter(
-    (student) =>
-      student.gender === selectedStudent.gender &&
-      student.house === selectedStudent.house
-  );
-
-  // Check if there is already a winner of the same gender and house
-  if (sameGenderHouseWinners.length >= 1) {
-    console.log("Max 1 winner of each gender in each house");
-    removeOther(sameGenderHouseWinners[0]);
-  }
-  // If there is no winner of the same gender and house, check if there is a winner of the opposite gender and house
-  else {
-    const oppositeGenderHouseWinners = allWinners.filter(
-      (student) =>
-        student.gender !== selectedStudent.gender &&
-        student.house === selectedStudent.house
-    );
-    // Check if there is already a winner of the opposite gender and house
-    if (oppositeGenderHouseWinners.length >= 2) {
-      console.log("Max 1 winner of each gender in each house");
-      removeAorB(oppositeGenderHouseWinners[0], selectedStudent);
-    }
-    // If there is no winner of either gender in the same house, make the student a winner
-    else {
-      makeWinner(selectedStudent);
-    }
-  }
-
-  function removeOther(other) {
-    document.querySelector("#remove_other").classList.remove("hidden");
-
-    //EVENTLISTENERS
-    document
-      .querySelector("#remove_other .close_button")
-      .addEventListener("click", closeDialog);
-
-    document
-      .querySelector("#remove_other .remove_button")
-      .addEventListener("click", removeStudent);
-
-    //IF USER CHOSE TO IGNORE:
-    function closeDialog() {
-      document.querySelector("#remove_other").classList.add("hidden");
-      document
-        .querySelector("#remove_other .close_button")
-        .removeEventListener("click", closeDialog);
-      document
-        .querySelector("#remove_other .remove_button")
-        .removeEventListener("click", removeStudent);
-    }
-    //IF USER CHOSE TO REMOVE:
-    function removeStudent() {
-      removeWinner(other);
-      makeWinner(selectedStudent);
-      buildList();
-      closeDialog();
-    }
-  }
-
-  function removeAorB(winnerA, winnerB) {
-    document.querySelector("#remove_aorb").classList.remove("hidden");
-
-    //EVENTLISTENERS
-    document
-      .querySelector("#remove_aorb .close_button")
-      .addEventListener("click", closeDialog);
-
-    document
-      .querySelector("#remove_aorb .remove_studentA")
-      .addEventListener("click", removeStudentA);
-
-    document
-      .querySelector("#remove_aorb .remove_studentB")
-      .addEventListener("click", removeStudentB);
-
-    //IF USER CHOSE TO IGNORE:
-    function closeDialog() {
-      document.querySelector("#remove_aorb").classList.add("hidden");
-      document
-        .querySelector("#remove_aorb .close_button")
-        .removeEventListener("click", closeDialog);
-      document
-        .querySelector("#remove_aorb .remove_studentA")
-        .removeEventListener("click", removeStudentA);
-      document
-        .querySelector("#remove_aorb .remove_studentB")
-        .removeEventListener("click", removeStudentB);
-    }
-
-    function removeStudentA() {
-      //CHOICE A
-      removeWinner(winnerA);
-      makeWinner(selectedStudent);
-      buildList();
-      closeDialog();
-    }
-
-    function removeStudentB() {
-      //CHOICE B
-      removeWinner(winnerB);
-      makeWinner(selectedStudent);
-      buildList();
-      closeDialog();
-    }
-  }
-
-  function removeWinner(winnerStudent) {
-    winnerStudent.winner = false;
-  }
-
-  function makeWinner(loserStudent) {
-    //if (student.house === "Hufflepuff") {}
-    loserStudent.winner = true;
-  }
-}
-
-//------------HACKING------------------
-
-document.querySelector(".hackButton").addEventListener("click", hackTheSystem);
-
-function hackTheSystem() {
-  // Check if student already exists in array
-  const studentExists = allStudents.some(
-    (student) =>
-      student.firstName === "Henry" && student.lastName === "Navntoft"
-  );
-
-  if (studentExists) {
-    console.log("You have already been added to the student list.");
-  } else {
-    //CHANGE BACKGROUND COLOR FOR HACKING EFFECT
-    document.querySelector("body").style.backgroundColor = "var(--highlight)";
-
-    // Insert yourself
-    const mySelfStudent = {
-      firstName: "Henry",
-      lastName: "Navntoft",
-      middleName: "Lundberg",
-      nickName: "",
-      gender: "Boy",
-      image: "images/navntoft_h.png",
-      house: "Hufflepuff",
-      bloodStatus: "Pure Blood",
-      stars: false,
-      winner: false,
-      expelled: false,
-    };
-    allStudents.push(mySelfStudent);
-
-    console.log(
-      "You have been added to the student list and the system has been hacked!"
-    );
-  }
-
-  randomBloodStatus();
-
-  buildList();
 }
